@@ -11,17 +11,22 @@ class ZoneNotifier extends AsyncNotifier<List<ZonaRifiuti>> {
       ref.read(rifiutiServiceProvider).getZone();
 }
 
-final selectedZonaIdProvider = StateProvider<int?>((ref) {
-  return ref.watch(preferencesServiceProvider).zonaRifiutiId;
-});
+final selectedZonaIdProvider =
+    NotifierProvider<SelectedZonaNotifier, int?>(SelectedZonaNotifier.new);
+
+class SelectedZonaNotifier extends Notifier<int?> {
+  @override
+  int? build() => ref.watch(preferencesServiceProvider).zonaRifiutiId;
+
+  void set(int? value) => state = value;
+}
 
 final calendarioProvider =
-    AsyncNotifierProvider.autoDispose<CalendarioNotifier, List<RaccoltaGiorno>>(
+    AsyncNotifierProvider<CalendarioNotifier, List<RaccoltaGiorno>>(
   CalendarioNotifier.new,
 );
 
-class CalendarioNotifier
-    extends AutoDisposeAsyncNotifier<List<RaccoltaGiorno>> {
+class CalendarioNotifier extends AsyncNotifier<List<RaccoltaGiorno>> {
   @override
   Future<List<RaccoltaGiorno>> build() {
     final zonaId = ref.watch(selectedZonaIdProvider);

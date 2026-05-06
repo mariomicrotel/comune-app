@@ -144,6 +144,11 @@ class AppColors {
     chip: Color(0xFF1A2839),
   );
 
+  /// Resolve color tokens from brightness and palette.
+  static AppColorTokens resolve(Brightness brightness, AppPalette palette) {
+    return brightness == Brightness.dark ? dark : light[palette]!;
+  }
+
   // Waste collection type colors
   static const Color wasteOrganico = Color(0xFF8B6F47);
   static const Color wastePlastica = Color(0xFFFFB72B);

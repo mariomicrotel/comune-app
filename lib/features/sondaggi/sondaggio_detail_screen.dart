@@ -43,8 +43,7 @@ class _State extends ConsumerState<SondaggioDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final async = ref.watch(sondaggioDetailProvider(widget.id));
 
     return Scaffold(
@@ -172,7 +171,6 @@ class _QuestionWidget extends StatelessWidget {
         switch (domanda.tipo) {
           TipoDomanda.sceltaSingola => Column(
               children: domanda.opzioni.map((op) {
-                final selected = (risposta as String?) == op;
                 return InkWell(
                   onTap: disabled ? null : () => onChanged(op),
                   child: Padding(

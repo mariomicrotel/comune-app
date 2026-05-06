@@ -67,12 +67,13 @@ class SegnalazioneFormState {
 }
 
 final segnalazioneFormProvider =
-    StateNotifierProvider.autoDispose<SegnalazioneFormNotifier, SegnalazioneFormState>(
-  (_) => SegnalazioneFormNotifier(),
+    NotifierProvider<SegnalazioneFormNotifier, SegnalazioneFormState>(
+  SegnalazioneFormNotifier.new,
 );
 
-class SegnalazioneFormNotifier extends StateNotifier<SegnalazioneFormState> {
-  SegnalazioneFormNotifier() : super(const SegnalazioneFormState());
+class SegnalazioneFormNotifier extends Notifier<SegnalazioneFormState> {
+  @override
+  SegnalazioneFormState build() => const SegnalazioneFormState();
 
   void setCategoria(String c) => state = state.copyWith(categoria: c);
   void setDescrizione(String d) => state = state.copyWith(descrizione: d);

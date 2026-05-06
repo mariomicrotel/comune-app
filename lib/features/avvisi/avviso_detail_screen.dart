@@ -4,11 +4,12 @@ import 'package:intl/intl.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/providers/core_providers.dart';
+import '../../models/avviso.dart';
 import '../../widgets/loading_state.dart';
 import '../../widgets/error_state.dart';
 import '../../widgets/priority_badge.dart';
 
-final _avvisoDetailProvider = FutureProviderFamily<dynamic, int>(
+final _avvisoDetailProvider = FutureProvider.family<Avviso, int>(
   (ref, id) => ref.read(avvisiServiceProvider).getAvviso(id),
 );
 
@@ -21,8 +22,7 @@ class AvvisoDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(_avvisoDetailProvider(id));
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final df = DateFormat("d MMMM yyyy", 'it_IT');
 
     return Scaffold(

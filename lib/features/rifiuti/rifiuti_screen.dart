@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/providers/core_providers.dart';
@@ -10,19 +9,21 @@ import '../../widgets/empty_state.dart';
 import 'rifiuti_notifier.dart';
 
 // Reminder toggle — stored locally
-final _reminderProvider = StateNotifierProvider<_ReminderNotifier, bool>(
-  (ref) => _ReminderNotifier(ref.watch(sharedPreferencesProvider)),
-);
+final _reminderProvider =
+    NotifierProvider<_ReminderNotifier, bool>(_ReminderNotifier.new);
 
-class _ReminderNotifier extends StateNotifier<bool> {
-  final SharedPreferences _prefs;
+class _ReminderNotifier extends Notifier<bool> {
   static const _key = 'rifiuti_reminder';
 
-  _ReminderNotifier(this._prefs) : super(_prefs.getBool(_key) ?? false);
+  @override
+  bool build() {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getBool(_key) ?? false;
+  }
 
   Future<void> toggle(bool v) async {
     state = v;
-    await _prefs.setBool(_key, v);
+    await ref.read(sharedPreferencesProvider).setBool(_key, v);
   }
 }
 
@@ -32,8 +33,7 @@ class RifiutiScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
 
     final zoneAsync = ref.watch(zoneRifiutiProvider);
     final selectedId = ref.watch(selectedZonaIdProvider);
@@ -113,7 +113,7 @@ class RifiutiScreen extends ConsumerWidget {
                     zonaName: zonaName,
                     colors: colors,
                     onSelect: (id) {
-                      ref.read(selectedZonaIdProvider.notifier).state = id;
+                      ref.read(selectedZonaIdProvider.notifier).set(id);
                       ref.read(preferencesServiceProvider).setZonaRifiutiId(id);
                     },
                   ),

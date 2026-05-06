@@ -19,7 +19,15 @@ class AvvisiNotifier extends AsyncNotifier<List<Avviso>> {
 }
 
 // Filtered provider — derived from the main list
-final avvisiFilterProvider = StateProvider<String>((ref) => 'tutti');
+final avvisiFilterProvider =
+    NotifierProvider<AvvisiFilterNotifier, String>(AvvisiFilterNotifier.new);
+
+class AvvisiFilterNotifier extends Notifier<String> {
+  @override
+  String build() => 'tutti';
+
+  void set(String value) => state = value;
+}
 
 final avvisiFiltrati = Provider<AsyncValue<List<Avviso>>>((ref) {
   final filter = ref.watch(avvisiFilterProvider);

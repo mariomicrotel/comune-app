@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/providers/core_providers.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../models/documento.dart';
 import '../../widgets/loading_state.dart';
@@ -16,8 +17,7 @@ class DocumentiScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final async = ref.watch(documentiNotifierProvider);
 
     return Scaffold(

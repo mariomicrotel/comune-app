@@ -39,8 +39,10 @@ class _SegnalazioneCreateScreenState
   }
 
   AppColorTokens get _colors {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    return AppColors.resolve(
+      Theme.of(context).brightness,
+      ref.watch(activePaletteProvider),
+    );
   }
 
   void _nextStep() => setState(() => _step++);
@@ -57,7 +59,9 @@ class _SegnalazioneCreateScreenState
       }
       if (perm == LocationPermission.deniedForever) return;
       final pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
       ref.read(segnalazioneFormProvider.notifier).setLocation(
             pos.latitude,

@@ -31,7 +31,7 @@ class NotificationService {
       requestSoundPermission: false,
     );
     await _localNotifications.initialize(
-      const InitializationSettings(
+      settings: const InitializationSettings(
           android: androidSettings, iOS: iosSettings),
       onDidReceiveNotificationResponse: _onLocalTap,
     );
@@ -104,10 +104,10 @@ class NotificationService {
     if (notification == null) return;
 
     _localNotifications.show(
-      notification.hashCode,
-      notification.title,
-      notification.body,
-      NotificationDetails(
+      id: notification.hashCode,
+      title: notification.title,
+      body: notification.body,
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'cam_channel',
           'Comune App',

@@ -18,18 +18,20 @@ class SondaggiNotifier extends AsyncNotifier<List<Sondaggio>> {
   }
 }
 
-// Single sondaggio detail + risposte form
+// Single sondaggio detail
 final sondaggioDetailProvider =
-    FutureProviderFamily<Sondaggio, int>((ref, id) =>
+    FutureProvider.family<Sondaggio, int>((ref, id) =>
         ref.read(sondaggiServiceProvider).getSondaggio(id));
 
+// Risposte form state
 final risposteProvider =
-    StateNotifierProvider.autoDispose<RisposteNotifier, Map<int, dynamic>>(
-  (_) => RisposteNotifier(),
+    NotifierProvider<RisposteNotifier, Map<int, dynamic>>(
+  RisposteNotifier.new,
 );
 
-class RisposteNotifier extends StateNotifier<Map<int, dynamic>> {
-  RisposteNotifier() : super({});
+class RisposteNotifier extends Notifier<Map<int, dynamic>> {
+  @override
+  Map<int, dynamic> build() => {};
 
   void set(int domandaId, dynamic value) =>
       state = {...state, domandaId: value};

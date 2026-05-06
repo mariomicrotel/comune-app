@@ -9,6 +9,7 @@ import '../../widgets/error_state.dart';
 import '../../widgets/empty_state.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/providers/core_providers.dart';
 import 'avvisi_notifier.dart';
 
 class AvvisiListScreen extends ConsumerWidget {
@@ -17,8 +18,7 @@ class AvvisiListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final allAvvisi = ref.watch(avvisiNotifierProvider);
     final filtered = ref.watch(avvisiFiltrati);
     final activeFilter = ref.watch(avvisiFilterProvider);
@@ -72,7 +72,7 @@ class AvvisiListScreen extends ConsumerWidget {
                 counts: counts,
                 colors: colors,
                 onSelected: (f) =>
-                    ref.read(avvisiFilterProvider.notifier).state = f,
+                    ref.read(avvisiFilterProvider.notifier).set(f),
               ),
             ),
           ),

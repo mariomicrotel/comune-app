@@ -17,8 +17,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final prefs = ref.watch(preferencesServiceProvider);
     final firstName = prefs.firstName ?? 'Cittadino';
     final urgentiCount = ref.watch(avvisiUrgentiCount);
@@ -230,15 +229,22 @@ class _HomeHeader extends StatelessWidget {
                         ),
                       ),
                       // Notifications bell
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(12),
+                      GestureDetector(
+                        onTap: () => context.push('/notifiche'),
+                        child: Semantics(
+                          label: 'Notifiche',
+                          button: true,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.notifications_outlined,
+                                color: Colors.white, size: 20),
+                          ),
                         ),
-                        child: const Icon(Icons.notifications_outlined,
-                            color: Colors.white, size: 20),
                       ),
                     ],
                   ),

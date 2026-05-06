@@ -28,6 +28,8 @@ class PreferencesService {
     final existing = _prefs.getString(_kDeviceId);
     if (existing != null) return existing;
     final id = const Uuid().v4();
+    // Fire-and-forget is acceptable here — SharedPreferences writes to disk
+    // asynchronously but maintains in-memory cache immediately
     _prefs.setString(_kDeviceId, id);
     return id;
   }

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/app_colors.dart';
 import '../network/api_client.dart';
 import '../../services/preferences_service.dart';
 import '../../services/auth_service.dart';
@@ -74,3 +75,15 @@ final documentiServiceProvider = Provider<DocumentiService>(
 final sondaggiServiceProvider = Provider<SondaggiService>(
   (ref) => SondaggiService(ref.watch(dioProvider)),
 );
+
+// ── Active palette provider ─────────────────────────────────────────────────
+
+final activePaletteProvider = Provider<AppPalette>((ref) {
+  final key = ref.watch(preferencesServiceProvider).palette;
+  return switch (key) {
+    'bluSavoia' => AppPalette.bluSavoia,
+    'verdeBorgo' => AppPalette.verdeBorgo,
+    'tricolore' => AppPalette.tricolore,
+    _ => AppPalette.bluCivico,
+  };
+});

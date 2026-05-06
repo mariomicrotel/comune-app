@@ -5,6 +5,7 @@ import '../../core/config/app_config.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/providers/core_providers.dart';
+import '../../services/preferences_service.dart';
 import '../../features/rifiuti/rifiuti_notifier.dart';
 import '../../features/segnalazioni/segnalazioni_notifier.dart';
 
@@ -14,8 +15,7 @@ class ProfiloScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final prefs = ref.watch(preferencesServiceProvider);
 
     // User info
@@ -89,8 +89,7 @@ class ProfiloScreen extends ConsumerWidget {
                     _ActivityItem(
                       icon: Icons.notifications_outlined,
                       label: 'Notifiche ricevute',
-                      badge: '12 nuove',
-                      onTap: () {},
+                      onTap: () => context.push('/notifiche'),
                       colors: colors,
                     ),
                     _ActivityItem(
@@ -145,7 +144,7 @@ class ProfiloScreen extends ConsumerWidget {
                     _ActivityItem(
                       icon: Icons.privacy_tip_outlined,
                       label: 'Privacy Policy',
-                      onTap: () {},
+                      onTap: () => context.push('/onboarding'),
                       colors: colors,
                     ),
                     _ActivityItem(
@@ -190,7 +189,7 @@ class ProfiloScreen extends ConsumerWidget {
     BuildContext ctx,
     WidgetRef ref,
     AppColorTokens colors,
-    dynamic prefs,
+    PreferencesService prefs,
   ) {
     showDialog(
       context: ctx,
@@ -279,7 +278,7 @@ class _AvatarCard extends StatelessWidget {
                 Text(email, style: theme.textTheme.bodySmall),
                 if (zonaName != null) ...[
                   const SizedBox(height: 2),
-                  Text('Zona B — $zonaName',
+                  Text(zonaName!,
                       style: theme.textTheme.bodySmall
                           ?.copyWith(color: colors.textFaint)),
                 ],

@@ -9,7 +9,7 @@ import '../../widgets/loading_state.dart';
 import '../../widgets/error_state.dart';
 
 final _segnalazioneDetailProvider =
-    FutureProviderFamily<Segnalazione, String>((ref, id) {
+    FutureProvider.family<Segnalazione, String>((ref, id) {
   return ref.read(segnalazioniServiceProvider).getSegnalazione(id);
 });
 
@@ -20,8 +20,7 @@ class SegnalazioneDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final async = ref.watch(_segnalazioneDetailProvider(id));
     final df = DateFormat('d MMMM yyyy', 'it_IT');
 

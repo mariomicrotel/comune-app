@@ -9,7 +9,7 @@ import '../../models/evento.dart';
 import '../../widgets/loading_state.dart';
 import '../../widgets/error_state.dart';
 
-final _eventoDetailProvider = FutureProviderFamily<Evento, int>((ref, id) {
+final _eventoDetailProvider = FutureProvider.family<Evento, int>((ref, id) {
   return ref.read(eventiServiceProvider).getEvento(id);
 });
 
@@ -31,8 +31,7 @@ class EventoDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final async = ref.watch(_eventoDetailProvider(id));
 
     return Scaffold(

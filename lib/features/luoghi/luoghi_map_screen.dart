@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/providers/core_providers.dart';
 import '../../models/luogo.dart';
 import '../../widgets/loading_state.dart';
 import '../../widgets/error_state.dart';
@@ -27,8 +28,21 @@ Color _catColor(String cat) {
   }
 }
 
-final _mapFilterProvider = StateProvider<String>((ref) => 'tutti');
-final _mapSearchProvider = StateProvider<String>((ref) => '');
+final _mapFilterProvider = NotifierProvider<_MapFilterNotifier, String>(_MapFilterNotifier.new);
+
+class _MapFilterNotifier extends Notifier<String> {
+  @override
+  String build() => 'tutti';
+  void set(String value) => state = value;
+}
+
+final _mapSearchProvider = NotifierProvider<_MapSearchNotifier, String>(_MapSearchNotifier.new);
+
+class _MapSearchNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+  void set(String value) => state = value;
+}
 
 class LuoghiMapScreen extends ConsumerWidget {
   const LuoghiMapScreen({super.key});
@@ -38,8 +52,7 @@ class LuoghiMapScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final colors = isDark ? AppColors.dark : AppColors.light[AppPalette.bluCivico]!;
+    final colors = AppColors.resolve(theme.brightness, ref.watch(activePaletteProvider));
     final async = ref.watch(luoghiNotifierProvider);
     final filter = ref.watch(_mapFilterProvider);
     final search = ref.watch(_mapSearchProvider);
@@ -140,7 +153,7 @@ class LuoghiMapScreen extends ConsumerWidget {
                         colors: colors,
                         onBack: () => Navigator.maybePop(context),
                         onChanged: (v) =>
-                            ref.read(_mapSearchProvider.notifier).state = v,
+                            ref.read(_mapSearchProvider.notifier).set(v),
                       ),
                     ),
                   ],
@@ -155,7 +168,7 @@ class LuoghiMapScreen extends ConsumerWidget {
                   active: filter,
                   colors: colors,
                   onSelect: (c) =>
-                      ref.read(_mapFilterProvider.notifier).state = c,
+                      ref.read(_mapFilterProvider.notifier).set(c),
                 ),
               ),
 
