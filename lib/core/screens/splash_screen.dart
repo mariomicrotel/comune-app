@@ -22,7 +22,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
     final prefs = ref.read(preferencesServiceProvider);
-    if (prefs.privacyConsent) {
+    if (prefs.onboardingComplete) {
       context.go('/home');
     } else {
       context.go('/onboarding');

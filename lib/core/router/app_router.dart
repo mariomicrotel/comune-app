@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/core_providers.dart';
 import '../screens/splash_screen.dart';
 import '../screens/onboarding_privacy_screen.dart';
+import '../screens/privacy_policy_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/avvisi/avvisi_list_screen.dart';
 import '../../features/avvisi/avviso_detail_screen.dart';
@@ -32,14 +33,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         ErrorScreen(error: state.error, onRetry: () => context.go('/home')),
     redirect: (context, state) {
       final loc = state.matchedLocation;
+
+      // Splash bypasses all guards
       if (loc == '/splash') return null;
-      if (!prefs.privacyConsent && loc != '/onboarding') return '/onboarding';
-      if (prefs.privacyConsent && loc == '/onboarding') return '/home';
+
+      // Privacy policy is always accessible (from onboarding and profilo)
+      if (loc == '/privacy-policy') return null;
+
+      // Guard: redirect to onboarding if not completed
+      final completed = prefs.onboardingComplete;
+      if (!completed && loc != '/onboarding') return '/onboarding';
+      if (completed && loc == '/onboarding') return '/home';
+
       return null;
     },
     routes: [
       GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingPrivacyScreen()),
+      GoRoute(path: '/privacy-policy', builder: (_, __) => const PrivacyPolicyScreen()),
 
       // ── Shell route — bottom nav ──────────────────────────────────────────
       StatefulShellRoute.indexedStack(
@@ -65,7 +76,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               ],
             ),
           ]),
-          // Branch 2: Mappa (Segnala is a modal push, not a shell branch)
+          // Branch 2: Mappa
           StatefulShellBranch(routes: [
             GoRoute(
                 path: '/luoghi/mappa',

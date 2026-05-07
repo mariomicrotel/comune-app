@@ -30,7 +30,10 @@ final dioProvider = Provider<Dio>(
 );
 
 final authServiceProvider = Provider<AuthService>(
-  (ref) => AuthService(ref.watch(preferencesServiceProvider)),
+  (ref) => AuthService(
+    ref.watch(preferencesServiceProvider),
+    ref.watch(dioProvider),
+  ),
 );
 
 final apiNotificationServiceProvider = Provider<ApiNotificationService>(
